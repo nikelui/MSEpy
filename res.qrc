@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="start">
+    <file>resource/about.png</file>
+    <file>resource/welcome_open.png</file>
+    <file>resource/welcome_new.png</file>
+    <file>resource/welcome_last.png</file>
+  </qresource>
+</RCC>
