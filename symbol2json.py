@@ -30,8 +30,9 @@ f = open(fname+'.txt','w')
 j = open(fname+'.json','w')
 
 jsonstring=''
-ccount = 1
 
+first_part = False
+last_part = False
 first_point = False # Flag
 last_point = False
 
@@ -39,13 +40,16 @@ for i,line in enumerate(content):
     line = line.strip()
     line = line.replace('"','') # remove double quotes
     key,val = line.split(':',maxsplit=1)
-    if key == 'part':
-        key = key+str(ccount)
-        ccount +=1
+    if 'mse' in key:
+        key = key[1:]
+    if key == 'part' and tabs[i] == tabs[i-1]:
+        first_part = True
     if key == 'point' and tabs[i] == tabs[i-1]:
         first_point = True
     if tabs[i] - tabs[i+1] >= 2:
         last_point = True
+    if tabs[i] - tabs[i+1] >= 3:
+        last_part = True
     if tabs[i] < tabs[i+1]:
         line = '"'+key.strip()+'":'
     else:
@@ -57,8 +61,13 @@ for i,line in enumerate(content):
         line = '\t'*tabs[i]+line.strip()+','
     if tabs[i] < tabs[i+1]:
         line = '\t'*tabs[i]+line.strip()+'{'
+        if 'part' in line and not first_part:
+            line = '\t'*tabs[i]+'{'
+        if 'part' in line and first_part:
+            line = line[:-1]+'[{'
+            first_part = False
         if 'point' in line and not first_point:
-            line = '\t'*tabs[i]+'{'        
+            line = '\t'*tabs[i]+'{'
         if 'point' in line and first_point:
             line = line[:-1]+'[{'
             first_point = False
@@ -67,13 +76,11 @@ for i,line in enumerate(content):
         line = '\t'*tabs[i]+line.strip()+'}'*(tabs[i]-tabs[i+1])+','
         if last_point:
             line = line[:-(tabs[i]-tabs[i+1]+1)] + '}]},'
-            last_point=False        
+            last_point=False
+        if last_part:
+            line = line[:-1]+']'
         if i == len(content)-1:
-            line = line[:-1]+'}'
-        
-#    if i == len(content)-1:
-#        line = '\t'*tabs[i]+line.strip()+'}'
-#    print(line,end='\n')
+            line = line+'}'
     jsonstring = jsonstring+line
     f.write(line+'\n')
 f.close()

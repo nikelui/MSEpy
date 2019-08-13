@@ -27,3 +27,4 @@ And also the resources file used in the project, with pyrcc5:
 _version 0.1_
 
 + Layout of loading screen. The "Open set" button opens a file dialog to select a .mse-set file
++ Instead of using a custom format to save the data, switched to more global standards. Added scripts to convert the set file in .json (TODO: parse the symbol file and convert to SVG).
